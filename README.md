@@ -79,7 +79,7 @@ opt     router  192.168.88.1
 ```
 完成udhcp的配置后，继续修改`/etc/network/interfaces`，在托管的WiFi网卡下添加：
 
-    post-up service udhcpd start\
+    post-up service udhcpd start
 
 ### iptables
 
