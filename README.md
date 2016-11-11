@@ -49,6 +49,10 @@ redirect_rewrites_host_header off     #是否更新host头信息
 redirect_children 200                 #自行指定子进程数量
 #=========================================================
 ```
+完成squid配置后，更改iptables实现80端口重定向到squid监听的3128端口：
+
+    iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 3128
+
 ### hostapd
 ```
 #open WiFi config file
@@ -73,6 +77,21 @@ opt     dns     114.114.114.114 8.8.8.8
 option  subnet  255.255.255.0
 opt     router  192.168.88.1
 ```
+完成udhcp的配置后，继续修改`/etc/network/interfaces`，在托管的WiFi网卡下添加：
+
+    post-up service udhcpd start\
+
+### iptables
+
+    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+执行`iptables-save > /etc/init.d/iptables.up.rules`，将当前iptables配置保存。
+
+完成iptables的配置后，继续修改`/etc/network/interfaces`，在托管的WiFi网卡下添加：
+
+    pre-up iptables-restore < /etc/init.d/iptables.up.rules
+
+保证重启后仍可正常使用。
 ## 0x04 注意事项
 1. 注意apache网站目录文件夹的权限和隶属于的用户，最好是能与squid用户相同的用户组。如果不是，可以使用chown进行修改。例：`chown proxy.proxy xxx`
 1. 注意脚本文件的权限。脚本文件必须是可以被squid用户执行的。
