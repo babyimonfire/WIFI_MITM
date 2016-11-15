@@ -1,0 +1,21 @@
+# file located n in /etc/interface
+
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+#allow-hotplug wlan0
+
+#auto wlan0
+#iface wlan0 inet static
+#       address 192.168.88.1
+#       netmask 255.255.255.0
+#post-up service udhcpd start
+#pre-up iptables-restore < /etc/init.d/iptables.up.rules
+
+auto wlan2
+iface wlan2 inet static
+        address 192.168.88.1
+        #address 192.168.192.1
+        netmask 255.255.255.0
+post-up service udhcpd start
+pre-up iptables-restore < /etc/init.d/iptables.up.rules
